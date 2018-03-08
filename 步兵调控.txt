@@ -1,0 +1,38 @@
+task_cmcontral   陀螺仪，作为云台的反馈
+
+
+driver_canmoter 读云台编码器的值，做底盘跟随的反馈值和云台设定值
+
+云台pitch（俯仰）yaw（摆动）运用的都是陀螺仪的绝对值角度
+读取绝对值
+
+先读陀螺仪绝对值，设定当前为零；根据遥控器或者键盘改变设定值，反馈值仍旧为陀螺仪绝对值。
+
+
+疑问：taskmoter。c里面pid设定值重复设定？
+
+底盘跟随设定值  ChassisSpeedRef.rotate_ref = 0;？？
+
+
+新框架
+task motor  （设定值和反馈值的选择和计算yawAngleTarget，pitchAngleTarget，FrontBackSpeedTarget，LeftRightSpeedTarget）
+
+application setmotor （底层，被下面两个调用：进行最后一步PID计算上层，并进行can发送，详细发送）
+
+application chassiscontral （底盘PID详细计算，速度位置，读值）
+application gimbalcontral  （底盘PID详细计算，速度位置，读值）
+
+
+
+两秒准备
+先抬头，把realangle设定为零，反馈值是realangle
+再把陀螺仪当前位置设定为零
+
+正常模式
+调节云台：改target 反馈值为realangle
+底盘跟随：通过底盘转动使realagle=0
+
+
+
+底盘控制的是绝对值
+云台给的是相对值，所以是在原来的基础上进行加减
